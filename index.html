@@ -23,8 +23,90 @@
 <img class="fireworks" src="https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif" alt="Fireworks"/>
 </section>
 </main>
+
 <script>
 const zone=document.getElementById("zone"),yesBtn=document.getElementById("yesBtn"),noBtn=document.getElementById("noBtn"),result=document.getElementById("result"),hint=document.getElementById("hint"),confettiCanvas=document.getElementById("confettiCanvas");function resizeConfettiCanvas(){const e=Math.max(1,window.devicePixelRatio||1);confettiCanvas.width=Math.floor(window.innerWidth*e),confettiCanvas.height=Math.floor(window.innerHeight*e),confettiCanvas.style.width="100vw",confettiCanvas.style.height="100vh"}resizeConfettiCanvas(),window.addEventListener("resize",resizeConfettiCanvas),window.addEventListener("orientationchange",()=>setTimeout(resizeConfettiCanvas,150));const confettiInstance=confetti.create(confettiCanvas,{resize:!1,useWorker:!0});function fullScreenConfetti(){const e=Date.now()+1600;!function t(){confettiInstance({particleCount:12,spread:90,startVelocity:45,ticks:180,origin:{x:Math.random(),y:Math.random()*.3}}),Date.now()<e&&requestAnimationFrame(t)}(),setTimeout(()=>{confettiInstance({particleCount:300,spread:140,startVelocity:60,ticks:220,origin:{x:.5,y:.55}})},300)}let yesScale=1;function growYes(){yesScale=Math.min(2.2,yesScale+.1),yesBtn.style.transform=`translateY(-50%) scale(${yesScale})`}function clamp(e,t,a){return Math.max(t,Math.min(a,e))}function moveNo(e,t){const a=zone.getBoundingClientRect(),n=noBtn.getBoundingClientRect();let o=(n.left+n.width/2)-e,i=(n.top+n.height/2)-t,r=Math.hypot(o,i)||1;o/=r,i/=r;let l=(n.left-a.left)+o*150,s=(n.top-a.top)+i*150;l=clamp(l,0,a.width-n.width),s=clamp(s,0,a.height-n.height),noBtn.style.left=l+"px",noBtn.style.top=s+"px",noBtn.style.transform="none",growYes()}zone.addEventListener("pointermove",e=>{const t=noBtn.getBoundingClientRect(),a=Math.hypot(t.left+t.width/2-e.clientX,t.top+t.height/2-e.clientY);a<140&&moveNo(e.clientX,e.clientY)}),noBtn.addEventListener("click",e=>e.preventDefault()),yesBtn.addEventListener("click",()=>{zone.style.display="none",hint.style.display="none",result.style.display="block",resizeConfettiCanvas(),fullScreenConfetti()});
+
+let coffeeBtn, wineBtn, finalResult, finalHint, finalFireworks;
+
+function initFinalResult() {
+  const html = `
+    <div style="position:absolute; left:18%; top:50%; transform:translateY(-50%); width:260px; text-align:center; z-index:10;">
+      <h2 style="font-size:clamp(30px,4.5vw,46px); margin:10px 0; color:#fff; text-shadow:0 3px 8px rgba(0,0,0,0.4);">Coffee or Wine? 🥤🍷</h2>
+      <div style="display:flex; gap:18px;">
+        <button id="coffeeBtn" style="flex:1; padding:16px 24px; font-size:18px; font-weight:800; border-radius:999px; border:none; cursor:pointer; box-shadow:0 10px 24px rgba(0,0,0,.2); background:#6fd77d; color:#fff; transition:transform .12s ease, background .12s ease;">☕ Coffee</button>
+        <button id="wineBtn" style="flex:1; padding:16px 24px; font-size:18px; font-weight:800; border-radius:999px; border:none; cursor:pointer; box-shadow:0 10px 24px rgba(0,0,0,.2); background:#ff6b6b; color:#fff; transition:transform .12s ease, background .12s ease;">🍷 Wine</button>
+      </div>
+      <div id="finalHint" class="hint" style="margin-top:14px; font-size:13px; opacity:.9; color:#fff; text-shadow:0 2px 6px rgba(0,0,0,0.3);">Choose your poison 😏</div>
+    </div>
+    <section id="finalResult" class="result" style="display:none; margin-top:0; width:100%; max-width:420px; margin-left:50%;">
+      <h2 style="font-size:clamp(30px,4.5vw,46px); margin:10px 0; color:#fff; text-shadow:0 3px 8px rgba(0,0,0,0.4);">YAY! 🎉</h2>
+      <img id="finalFireworks" class="fireworks" src="https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif" alt="Fireworks"/>
+    </section>
+  `;
+  result.insertAdjacentHTML('beforeend', html);
+
+  coffeeBtn = document.getElementById('coffeeBtn');
+  wineBtn = document.getElementById('wineBtn');
+  finalResult = document.getElementById('finalResult');
+  finalHint = document.getElementById('finalHint');
+  finalFireworks = document.getElementById('finalFireworks');
+
+  coffeeBtn.addEventListener('click', () => {
+    finalResult.style.display = 'block';
+    finalHint.style.display = 'none';
+    finalFireworks.style.display = 'block';
+    resizeConfettiCanvas();
+    fullScreenConfetti();
+    const message = "A cold frappe is coming for you 🍹";
+    showToast(message);
+  });
+
+  wineBtn.addEventListener('click', () => {
+    finalResult.style.display = 'block';
+    finalHint.style.display = 'none';
+    finalFireworks.style.display = 'block';
+    resizeConfettiCanvas();
+    fullScreenConfetti();
+    const message = "Chardonnay is gonna die for you 🍷";
+    showToast(message);
+  });
+}
+
+function showToast(message) {
+  const toast = document.createElement('div');
+  toast.style.position = 'fixed';
+  toast.style.bottom = '30px';
+  toast.style.left = '50%';
+  toast.style.transform = 'translateX(-50%)';
+  toast.style.background = 'rgba(255,255,255,0.95)';
+  toast.style.color = '#111827';
+  toast.style.padding = '14px 28px';
+  toast.style.borderRadius = '9999px';
+  toast.style.fontSize = '15px';
+  toast.style.fontWeight = '700';
+  toast.style.boxShadow = '0 10px 30px rgba(0,0,0,.25)';
+  toast.style.zIndex = '99999';
+  toast.style.whiteSpace = 'nowrap';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.transition = 'all 0.4s cubic-bezier(0.23,1,0.32,1)';
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(-50%) translateY(20px)';
+    setTimeout(() => toast.remove(), 400);
+  }, 2200);
+}
+
+yesBtn.addEventListener("click", () => {
+  zone.style.display = "none";
+  hint.style.display = "none";
+  result.style.display = "block";
+  resizeConfettiCanvas();
+  fullScreenConfetti();
+  setTimeout(initFinalResult, 800);
+});
 </script>
 </body>
 </html>
